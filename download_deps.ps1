@@ -1,9 +1,9 @@
 # =============================================================================
-# download_deps.ps1 — скачивает ВСЕ зависимости для всех модулей (S3–S6)
+# download_deps.ps1 - скачивает ВСЕ зависимости для всех модулей (S3-S6)
 #
 # Результат:
-#   libs\maven\  — jar'ы для S3_back, S5_back, S6_back (Java/Spring Boot)
-#   libs\nuget\  — пакеты для S4_Client, S5_desk, S6_desk (C# WinForms)
+#   libs\maven\  - jar'ы для S3_back, S5_back, S6_back (Java/Spring Boot)
+#   libs\nuget\  - пакеты для S4_Client, S5_desk, S6_desk (C# WinForms)
 #
 # После запуска этого скрипта интернет больше не нужен.
 #
@@ -15,20 +15,20 @@
 # Запуск: .\download_deps.ps1
 # =============================================================================
 
-$ScriptDir  = Split-Path -Parent $MyInvocation.MyCommand.Path
-$LibsMaven  = "$ScriptDir\libs\maven"
-$LibsNuget  = "$ScriptDir\libs\nuget"
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$LibsMaven = "$ScriptDir\libs\maven"
+$LibsNuget = "$ScriptDir\libs\nuget"
 
-function Write-Info  ($msg) { Write-Host "[INFO] $msg" -ForegroundColor Green  }
-function Write-Warn  ($msg) { Write-Host "[WARN] $msg" -ForegroundColor Yellow }
-function Write-Err   ($msg) { Write-Host "[ERROR] $msg" -ForegroundColor Red; exit 1 }
+function Write-Info ($msg) { Write-Host "[INFO] $msg" -ForegroundColor Green  }
+function Write-Warn ($msg) { Write-Host "[WARN] $msg" -ForegroundColor Yellow }
+function Write-Err  ($msg) { Write-Host "[ERROR] $msg" -ForegroundColor Red; exit 1 }
 
 # --------------------------------------------------------------------------- #
 # Проверка инструментов
 # --------------------------------------------------------------------------- #
-if (-not (Get-Command mvn   -ErrorAction SilentlyContinue)) { Write-Err  "Maven не найден. Установи с https://maven.apache.org/" }
-if (-not (Get-Command java  -ErrorAction SilentlyContinue)) { Write-Err  "Java не найдена. Установи JDK 17+" }
-if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { Write-Warn "dotnet не найден — NuGet-зависимости будут пропущены" }
+if (-not (Get-Command mvn    -ErrorAction SilentlyContinue)) { Write-Err  "Maven не найден. Установи с https://maven.apache.org/" }
+if (-not (Get-Command java   -ErrorAction SilentlyContinue)) { Write-Err  "Java не найдена. Установи JDK 17+" }
+if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { Write-Warn "dotnet не найден - NuGet-зависимости будут пропущены" }
 
 # --------------------------------------------------------------------------- #
 # Создаём папки
@@ -38,7 +38,7 @@ New-Item -ItemType Directory -Force -Path $LibsMaven | Out-Null
 New-Item -ItemType Directory -Force -Path $LibsNuget  | Out-Null
 
 # =========================================================================== #
-#  MAVEN — Java бэкенды (S3, S5, S6)
+#  MAVEN - Java бэкенды (S3, S5, S6)
 # =========================================================================== #
 
 function Invoke-MavenDownload {
@@ -48,7 +48,7 @@ function Invoke-MavenDownload {
     )
 
     if (-not (Test-Path "$PomDir\pom.xml")) {
-        Write-Warn "[$Label] pom.xml не найден в $PomDir — пропускаю"
+        Write-Warn "[$Label] pom.xml не найден в $PomDir - пропускаю"
         return
     }
 
@@ -76,7 +76,7 @@ Invoke-MavenDownload -Label "S5_back" -PomDir "$ScriptDir\S5_plan\S5_back"
 Invoke-MavenDownload -Label "S6_back" -PomDir "$ScriptDir\S6_plan\S6_back"
 
 # =========================================================================== #
-#  NUGET — C# клиенты (S4, S5_desk, S6_desk)
+#  NUGET - C# клиенты (S4, S5_desk, S6_desk)
 # =========================================================================== #
 
 function Invoke-NugetDownload {
@@ -87,18 +87,17 @@ function Invoke-NugetDownload {
     )
 
     if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
-        Write-Warn "[$Label] dotnet не найден — пропускаю"
+        Write-Warn "[$Label] dotnet не найден - пропускаю"
         return
     }
 
     if (-not (Test-Path "$ProjDir\$Csproj")) {
-        Write-Warn "[$Label] $Csproj не найден в $ProjDir — пропускаю"
+        Write-Warn "[$Label] $Csproj не найден в $ProjDir - пропускаю"
         return
     }
 
     Write-Info "[$Label] Скачиваю NuGet-зависимости..."
 
-    # На Windows можно восстанавливать напрямую из реального csproj
     dotnet restore "$ProjDir\$Csproj" `
         --packages $LibsNuget `
         --no-http-cache | Out-Null
@@ -116,13 +115,10 @@ function Invoke-NugetDownload {
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <config>
-    <!-- Папка с кешем пакетов (относительный путь от .csproj) -->
     <add key="globalPackagesFolder" value="$RelPath" />
   </config>
   <packageSources>
-    <!-- Отключаем nuget.org для офлайн-режима -->
     <clear />
-    <!-- Локальная папка как источник пакетов -->
     <add key="local" value="$RelPath" />
   </packageSources>
 </configuration>
@@ -144,16 +140,16 @@ Invoke-NugetDownload -Label "S6_desk"   -ProjDir "$ScriptDir\S6_plan\S6_desk"   
 #  Итог
 # =========================================================================== #
 $MavenSize = if (Test-Path $LibsMaven) { "{0:N0} MB" -f ((Get-ChildItem $LibsMaven -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB) } else { "0 MB" }
-$NugetSize = if (Test-Path $LibsNuget)  { "{0:N0} MB" -f ((Get-ChildItem $LibsNuget  -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB) } else { "0 MB" }
+$NugetSize  = if (Test-Path $LibsNuget)  { "{0:N0} MB" -f ((Get-ChildItem $LibsNuget  -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB) } else { "0 MB" }
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Green
-Write-Host "  Все зависимости скачаны!" -ForegroundColor Green
+Write-Host "  Все зависимости скачаны!"                  -ForegroundColor Green
 Write-Host "============================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Папки:"
-Write-Host "    libs\maven\  — $MavenSize — Maven jar'ы"
-Write-Host "    libs\nuget\  — $NugetSize — NuGet пакеты"
+Write-Host "    libs\maven\  - $MavenSize - Maven jar'ы"
+Write-Host "    libs\nuget\  - $NugetSize  - NuGet пакеты"
 Write-Host ""
 Write-Host "  Офлайн-сборка Maven:"
 Write-Host "    cd S3_plan\S3_SpringServer"
