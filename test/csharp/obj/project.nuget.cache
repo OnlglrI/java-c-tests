@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "eUNpOp4/n8M=",
+  "success": true,
+  "projectFilePath": "/home/user/PycharmProjects/_tkinter/test/csharp/TestApp.csproj",
+  "expectedPackageFiles": [
+    "/home/user/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
+    "/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/8.0.25/microsoft.windowsdesktop.app.ref.8.0.25.nupkg.sha512"
+  ],
+  "logs": []
+}
