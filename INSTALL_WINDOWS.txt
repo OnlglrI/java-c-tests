@@ -1,0 +1,22 @@
+Перед запуском скриптов на Windows нужно установить JDK 17 и Maven.
+
+1. Открыть PowerShell от имени администратора (Win+X -> Windows PowerShell (администратор))
+
+2. Установить JDK 17 и Maven через winget:
+   winget install Microsoft.OpenJDK.17
+   winget install Apache.Maven
+
+3. Перезапустить PowerShell и проверить что всё установилось:
+   java -version
+   mvn -version
+
+4. Разрешить выполнение скриптов (один раз):
+   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+5. Перейти в папку проекта и запустить скрипты:
+   cd C:\путь\до\проекта
+   .\download_deps.ps1     <- скачивает все зависимости в libs\ (нужен интернет)
+   .\create_s3_files.ps1   <- создаёт файлы проекта S3
+
+После этого интернет для сборки не нужен.
+Офлайн-сборка: mvn package -o -Dmaven.repo.local=..\..\libs\maven
