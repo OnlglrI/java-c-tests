@@ -184,7 +184,12 @@ if (Get-Command dotnet -ErrorAction SilentlyContinue) {
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- S4/S5/S6 desk: JSON serialization -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
 </Project>
 '@
 

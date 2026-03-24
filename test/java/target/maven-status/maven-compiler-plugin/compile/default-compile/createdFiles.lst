@@ -1,3 +1,4 @@
-com/example/App.class
-com/example/TestDto.class
-com/example/TestController.class
+com\example\SecurityConfig.class
+com\example\TestDto.class
+com\example\App.class
+com\example\TestController.class
